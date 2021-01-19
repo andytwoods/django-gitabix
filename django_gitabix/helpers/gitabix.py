@@ -4,10 +4,20 @@ from pygit2._pygit2 import GitError
 
 from tests.settings import GITABIX_RUNSERVER
 
-def branch_base():
+RICH = 'rich info'
+
+def branch_base(info_level=None):
     repo_home = repository_home()
     try:
-        return Repository(repo_home).head.shorthand
+        repository = Repository(repo_home)
+        if not info_level:
+            return repository.head.shorthand
+        if info_level is RICH:
+            commit_info = repository.head.target
+            commit = repository.revparse_single
+            print(commit.author.time)
+            return f'{repository.head.shorthand} '
+
     except GitError:
         return f'Repository not found at {repo_home}! Use GITABIX_REPO_DIR in settings,py to set a different directory'
 
@@ -21,4 +31,4 @@ def repository_home():
 
 
 if GITABIX_RUNSERVER:
-    print(f'branch: { branch_base() }')
+    print(f'branch: { branch_base(RICH) }')
