@@ -31,7 +31,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_gitabix',
 
-
     # if your app has other dependencies that need to be added to the site
     # they should be added here
 ]
@@ -113,3 +112,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 GITABIX_REPO_DIR = os.path.dirname(BASE_DIR)
+GITABIX_RUNSERVER = True
+
+STATIC_ROOT = GITABIX_REPO_DIR + '/static'
