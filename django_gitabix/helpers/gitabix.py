@@ -1,23 +1,37 @@
+from datetime import timezone, timedelta, datetime
+
 from django.conf import settings
 from pygit2 import Repository
 from pygit2._pygit2 import GitError
 
 from tests.settings import GITABIX_RUNSERVER
 
-RICH = 'rich info'
 
 def branch_base(info_level=None):
+    return f'{repository().head.shorthand} '
+
+
+def branch_rich():
+    repo = repository()
+    commit_info = repo.head.target
+
+    commit = repo.revparse_single(commit_info.hex)
+    tzinfo = timezone(timedelta(minutes=commit.author.offset))
+    datetime_committed = datetime.fromtimestamp(float(commit.author.time), tzinfo)
+    dif = repo.diff()
+    deletions = dif.stats.deletions
+    files_changed = dif.stats.files_changed
+    insertions = dif.stats.insertions
+
+    combined_change = deletions + insertions
+
+    return repo.head.shorthand, combined_change
+
+
+def repository():
     repo_home = repository_home()
     try:
-        repository = Repository(repo_home)
-        if not info_level:
-            return repository.head.shorthand
-        if info_level is RICH:
-            commit_info = repository.head.target
-            commit = repository.revparse_single
-            print(commit.author.time)
-            return f'{repository.head.shorthand} '
-
+        return Repository(repo_home)
     except GitError:
         return f'Repository not found at {repo_home}! Use GITABIX_REPO_DIR in settings,py to set a different directory'
 
@@ -31,4 +45,4 @@ def repository_home():
 
 
 if GITABIX_RUNSERVER:
-    print(f'branch: { branch_base(RICH) }')
+    print(f'branch: {branch_base()}')

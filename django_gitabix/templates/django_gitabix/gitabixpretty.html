@@ -1,0 +1,46 @@
+{% load static %}
+
+<script type="text/javascript" src="{% static 'django_gitabix/cookies.min.js' %}"></script>
+
+<div id="gitabix-main">
+{% if hidden %}
+{% load static %}
+<button class="gitabix-btn">show gitabix</button>
+
+  <script>
+    var gitabixbtns = document.getElementsByClassName("gitabix-btn");
+    for (var i = 0; i < gitabixbtns.length; i++) {
+      gitabixbtns[i].addEventListener('click', function(){
+        Cookies.set('{{ GITABIX_COOKIE_SLEEP }}', '0');
+        location.reload();
+      }, false);
+    }
+
+  </script>
+{% else %}
+  <img style="width:12px" src="{% static 'django_gitabix/gitlogo.svg' %}" alt="git logo">{{ basic_info }}<span
+        style='margin-left:5px;'>
+{% if changes %}| snooze
+  <button class="gitabix-btn">30 mins</button>
+  <button class="gitabix-btn">60 mins</button>
+  {% for _ in changes %}
+    <img style="width:6px" src="{% static 'django_gitabix/bix.png' %}" alt="biscuit">
+  {% endfor %}
+  </span>
+
+  <script>
+    var gitabixbtns = document.getElementsByClassName("gitabix-btn");
+    for (var i = 0; i < gitabixbtns.length; i++) {
+      gitabixbtns[i].addEventListener('click', function(){
+        gitabix_sleep(this.innerHTML.replace(' mins', '') *1);
+      }, false);
+    }
+    function gitabix_sleep(mins){
+      Cookies.set('{{ GITABIX_COOKIE_SLEEP }}', '1', { expires: mins * 60 });
+      location.reload();
+    }
+
+  </script>
+{% endif %}
+{% endif %}
+</div>
