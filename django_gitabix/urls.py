@@ -7,5 +7,5 @@ from . import views
 
 app_name = 'django_gitabix'
 urlpatterns = [
-    url(r'', TemplateView.as_view(template_name="base.html")),
+    url(r'gitabix', views.action, name='gitabix-action'),
     ]
